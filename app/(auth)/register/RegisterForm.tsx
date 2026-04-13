@@ -45,7 +45,7 @@ export default function RegisterForm() {
           type="text"
           required
           minLength={2}
-          placeholder="Max Verstappen"
+          placeholder="Franz Hermann"
           className="w-full bg-[#0f0f0f] border border-[#2a2a2a] text-white placeholder-[#444] rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#e8143c] focus:border-transparent transition-all"
         />
         <FieldError message={state.fieldErrors?.display_name} />
