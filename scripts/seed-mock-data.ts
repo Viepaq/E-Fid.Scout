@@ -52,7 +52,7 @@ const MOCK_DRIVERS = [
   { id: 'a1b2c3d4-0003-0003-0003-000000000003', display_name: 'Lukas Mayer',  birth_date: '2011-01-10', iracing_customer_id: 'IR_003' },
   { id: 'a1b2c3d4-0004-0004-0004-000000000004', display_name: 'Felix Wagner', birth_date: '2006-11-05', iracing_customer_id: 'IR_004' },
   { id: 'a1b2c3d4-0005-0005-0005-000000000005', display_name: 'Noah Bauer',   birth_date: '2010-06-18', iracing_customer_id: 'IR_005' },
-  { id: 'a1b2c3d4-0006-0006-0006-000000000006', display_name: 'Tom Richter',  birth_date: '2013-09-30', iracing_customer_id: 'IR_006' },
+  { id: 'a1b2c3d4-0006-0006-0006-000000000006', display_name: 'Tom Richter',  birth_date: '2009-09-30', iracing_customer_id: 'IR_006' },
   { id: 'a1b2c3d4-0007-0007-0007-000000000007', display_name: 'Jonas Wolf',   birth_date: '2005-04-12', iracing_customer_id: 'IR_007' },
   { id: 'a1b2c3d4-0008-0008-0008-000000000008', display_name: 'Erik Schulz',  birth_date: '2008-12-03', iracing_customer_id: 'IR_008' },
   { id: 'a1b2c3d4-0009-0009-0009-000000000009', display_name: 'Finn Krause',  birth_date: '2012-08-25', iracing_customer_id: 'IR_009' },

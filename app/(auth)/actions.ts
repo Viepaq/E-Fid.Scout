@@ -55,7 +55,7 @@ export async function register(
     status: 'none',
   });
 
-  redirect('/dashboard');
+  redirect('/select');
 }
 
 export async function login(
@@ -75,5 +75,5 @@ export async function login(
 
   if (error) return { error: 'Invalid email or password' };
 
-  redirect('/dashboard');
+  redirect('/select');
 }

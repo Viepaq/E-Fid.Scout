@@ -39,10 +39,11 @@ function ScoreDot({ score }: { score: number }) {
 }
 
 function StatusBadge({ status }: { status: ScoutingStatus }) {
-  if (status === 'none' || status === 'qualifier_invited') return null;
-  const map: Record<string, { cls: string; label: string }> = {
-    watchlist:   { cls: 'bg-blue-500/15 text-blue-400 border-blue-500/30',     label: 'Watch List' },
-    talent_pool: { cls: 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30', label: 'Talent Pool' },
+  const map: Record<ScoutingStatus, { cls: string; label: string } | null> = {
+    none:               null,
+    watchlist:          { cls: 'bg-blue-500/15 text-blue-400 border-blue-500/30',       label: 'Watch List' },
+    talent_pool:        { cls: 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30', label: 'Talent Pool' },
+    qualifier_invited:  { cls: 'bg-[#CB3C33]/15 text-[#CB3C33] border-[#CB3C33]/30',   label: 'Qualifier' },
   };
   const s = map[status];
   if (!s) return null;

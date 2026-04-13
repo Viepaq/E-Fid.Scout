@@ -6,7 +6,9 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const isProtected =
-    pathname.startsWith("/dashboard") || pathname.startsWith("/scout");
+    pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/scout") ||
+    pathname === "/select";
 
   if (isProtected && !user) {
     const loginUrl = request.nextUrl.clone();
@@ -31,9 +33,9 @@ export async function middleware(request: NextRequest) {
   }
 
   if (pathname === "/" && user) {
-    const dashboardUrl = request.nextUrl.clone();
-    dashboardUrl.pathname = "/dashboard";
-    return NextResponse.redirect(dashboardUrl);
+    const selectUrl = request.nextUrl.clone();
+    selectUrl.pathname = "/select";
+    return NextResponse.redirect(selectUrl);
   }
 
   return response;

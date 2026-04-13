@@ -8,9 +8,18 @@ type NavItem = {
   label: string;
   href: string;
   filterValue?: string;
+  icon?: React.ReactNode;
 };
 
+const HomeIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+    <polyline points="9 22 9 12 15 12 15 22" />
+  </svg>
+);
+
 const NAV_ITEMS: NavItem[] = [
+  { label: 'Home',            href: '/scout/home', icon: <HomeIcon /> },
   { label: 'Talent Overview', href: '/scout' },
   { label: 'Watch List',      href: '/scout?filter=watchlist',   filterValue: 'watchlist' },
   { label: 'Talent Pool',     href: '/scout?filter=talent_pool', filterValue: 'talent_pool' },
@@ -23,6 +32,9 @@ export default function ScoutSidebarNav({ displayName }: { displayName: string }
   const currentFilter = searchParams.get('filter');
 
   function isActive(item: NavItem): boolean {
+    // Home link: exact match on /scout/home
+    if (item.href === '/scout/home') return pathname === '/scout/home';
+    // Other items only active when on /scout
     if (pathname !== '/scout') return false;
     if (!item.filterValue) return !currentFilter;
     return currentFilter === item.filterValue;
@@ -67,6 +79,7 @@ export default function ScoutSidebarNav({ displayName }: { displayName: string }
         <nav className="flex-1 px-3 py-4 space-y-0.5">
           {NAV_ITEMS.map((item) => (
             <Link key={item.href} href={item.href} className={desktopLinkClass(item)}>
+              {item.icon && <span className="mr-2 opacity-80">{item.icon}</span>}
               {item.label}
             </Link>
           ))}
@@ -151,6 +164,7 @@ export default function ScoutSidebarNav({ displayName }: { displayName: string }
                 onClick={() => setMobileOpen(false)}
                 className={mobileLinkClass(item)}
               >
+                {item.icon && <span className="mr-2 opacity-80">{item.icon}</span>}
                 {item.label}
               </Link>
             ))}
