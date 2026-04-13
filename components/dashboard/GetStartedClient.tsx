@@ -37,11 +37,11 @@ function useFadeUp(ref: React.RefObject<HTMLElement | null>, delay = 0) {
   }, [delay, ref]);
 }
 
-function FadeUp({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
+function FadeUp({ children, delay = 0, className = '', style }: { children: React.ReactNode; delay?: number; className?: string; style?: React.CSSProperties }) {
   const ref = useRef<HTMLDivElement>(null);
   useFadeUp(ref as React.RefObject<HTMLElement>, delay);
   return (
-    <div ref={ref} className={className}>
+    <div ref={ref} className={className} style={style}>
       {children}
     </div>
   );
