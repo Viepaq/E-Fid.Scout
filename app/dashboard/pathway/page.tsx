@@ -44,7 +44,7 @@ const STATUS_CONFIG: Record<
     badge: 'bg-amber-500/20 text-amber-400 border border-amber-500/40',
     badgeText: 'Talent Pool',
     motivation:
-      'You are in the FAT Karting League Talent Pool. A Qualifier Event awaits.',
+      'You are in the Talent Pool. A Qualifier Event awaits.',
   },
   qualifier_invited: {
     badge: 'bg-green-500/20 text-green-400 border border-green-500/40',
@@ -381,11 +381,11 @@ export default async function PathwayPage() {
 
           <Arrow active={qualState === 'completed' || scoutingStatus === 'qualifier_invited'} />
 
-          {/* Stage 4 — FAT Tryout */}
-          <StageCard title="FAT Karting Tryout" state={tryoutState}>
+          {/* Stage 4 — Real Motorsport Tryout */}
+          <StageCard title="Real Motorsport Tryout" state={tryoutState}>
             <p className="text-sm text-[#888888] leading-relaxed">
-              Winners of Qualifier Events receive an invitation to a physical tryout
-              with the FAT Karting League.
+              Winners of Qualifier Events receive an invitation to a physical
+              real-world motorsport tryout with our scouting partners.
             </p>
           </StageCard>
         </div>

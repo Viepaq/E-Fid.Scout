@@ -3,7 +3,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- ENUMS
 CREATE TYPE age_group_enum AS ENUM 
-  ('U10', 'U14', 'U17', 'U25', 'O25');
+  ('U12', 'U15', 'U18', 'U21', '21+');
 
 CREATE TYPE scouting_status_enum AS ENUM 
   ('none', 'watchlist', 'talent_pool', 'qualifier_invited');

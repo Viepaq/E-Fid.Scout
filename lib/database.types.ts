@@ -1,4 +1,4 @@
-export type AgeGroup = 'U10' | 'U14' | 'U17' | 'U25' | 'O25';
+export type AgeGroup = 'U12' | 'U15' | 'U18' | 'U21' | '21+';
 export type ScoutingStatus = 'none' | 'watchlist' | 'talent_pool' | 'qualifier_invited';
 export type UserRole = 'user' | 'scout' | 'admin';
 

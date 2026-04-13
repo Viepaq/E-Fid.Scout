@@ -79,11 +79,11 @@ function getAgeGroup(birthDate: Date): AgeGroup {
   const m = today.getMonth() - birthDate.getMonth();
   if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
 
-  if (age < 10) return 'U10';
-  if (age < 14) return 'U14';
-  if (age < 17) return 'U17';
-  if (age < 25) return 'U25';
-  return 'O25';
+  if (age < 12) return 'U12';
+  if (age < 15) return 'U15';
+  if (age < 18) return 'U18';
+  if (age < 21) return 'U21';
+  return '21+';
 }
 
 function daysAgo(n: number): Date {

@@ -4,7 +4,7 @@ import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useCallback } from 'react';
 import type { AgeGroup } from '@/lib/database.types';
 
-const AGE_GROUPS: Array<AgeGroup | 'all'> = ['all', 'U10', 'U14', 'U17', 'U25', 'O25'];
+const AGE_GROUPS: Array<AgeGroup | 'all'> = ['all', 'U12', 'U15', 'U18', 'U21', '21+'];
 
 type Props = {
   resultCount: number;
