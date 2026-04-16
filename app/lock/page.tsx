@@ -40,15 +40,6 @@ export default function LockPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center px-4">
 
-      {/* Logo */}
-      <div className="mb-10 text-center">
-        <span className="text-2xl font-bold tracking-tight">
-          <span className="text-white">Kaimann</span>
-          <span className="text-[#e8143c]"> Racing</span>
-        </span>
-        <p className="text-[#555] text-sm mt-1">Sim Racing Talent Platform</p>
-      </div>
-
       {/* Card */}
       <div className="w-full max-w-sm bg-[#111111] border border-[#222222] rounded-2xl p-8 shadow-2xl">
         <div className="mb-6 text-center space-y-1">
