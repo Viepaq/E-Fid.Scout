@@ -2,8 +2,23 @@ import { NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
-  const { response, user, serviceClient } = await updateSession(request);
   const { pathname } = request.nextUrl;
+
+  // ── Lock screen — checked before everything else ──────────────────────────
+  const lockExempt =
+    pathname === "/lock" ||
+    pathname.startsWith("/api/unlock");
+
+  const unlocked = request.cookies.get("site-unlocked")?.value === "true";
+
+  if (!unlocked && !lockExempt) {
+    const lockUrl = request.nextUrl.clone();
+    lockUrl.pathname = "/lock";
+    return NextResponse.redirect(lockUrl);
+  }
+
+  // ── Supabase session + route guards ───────────────────────────────────────
+  const { response, user, serviceClient } = await updateSession(request);
 
   const isProtected =
     pathname.startsWith("/dashboard") ||
