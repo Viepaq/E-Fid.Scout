@@ -14,7 +14,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: 'FID-Scout — Sim Racing Talent Platform',
+  title: 'Kaimann Racing — Sim Racing Talent Platform',
   description: 'Connect your iRacing account and get discovered by real-world motorsport organisations.',
 };
 

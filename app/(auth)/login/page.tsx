@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import LoginForm from './LoginForm';
 
 export const metadata: Metadata = {
-  title: 'Sign In — FID-Scout',
+  title: 'Sign In — Kaimann Racing',
 };
 
 export default function LoginPage() {

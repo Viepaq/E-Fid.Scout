@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import RegisterForm from './RegisterForm';
 
 export const metadata: Metadata = {
-  title: 'Create Account — FID-Scout',
+  title: 'Create Account — Kaimann Racing',
 };
 
 export default function RegisterPage() {

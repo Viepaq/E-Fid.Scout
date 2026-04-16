@@ -27,8 +27,8 @@ export default async function SelectPage() {
       {/* Logo */}
       <div className="mb-10 text-center">
         <span className="text-2xl font-bold tracking-tight">
-          <span className="text-white">FID</span>
-          <span className="text-[#e8143c]">-Scout</span>
+          <span className="text-white">Kaimann</span>
+          <span className="text-[#e8143c]"> Racing</span>
         </span>
         <p className="text-[#555] text-sm mt-1">Sim Racing Talent Platform</p>
       </div>

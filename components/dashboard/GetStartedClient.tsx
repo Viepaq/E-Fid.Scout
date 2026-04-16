@@ -268,13 +268,13 @@ export default function GetStartedClient({ displayName, score, scoutingStatus }:
                 className="text-[11px] font-semibold uppercase"
                 style={{ color: '#CB3C33', letterSpacing: '0.15em' }}
               >
-                Welcome to FID-Scout
+                Welcome to Kaimann Racing
               </p>
               <h1 className="text-[28px] font-extrabold text-white leading-tight">
                 Your path to real-world racing<br className="hidden lg:block" /> starts here.
               </h1>
               <p className="text-[14px] text-[#888888] leading-relaxed">
-                FID-Scout analyzes your iRacing performance across 5 dimensions and connects
+                Kaimann Racing analyzes your iRacing performance across 5 dimensions and connects
                 top talents with real motorsport organizations.
               </p>
             </div>
@@ -290,7 +290,7 @@ export default function GetStartedClient({ displayName, score, scoutingStatus }:
       <section className="space-y-6">
         <FadeUp delay={0}>
           <div className="space-y-1">
-            <h2 className="text-lg font-bold text-white">How FID-Scout works</h2>
+            <h2 className="text-lg font-bold text-white">How Kaimann Racing works</h2>
             <p className="text-sm text-[#888888]">Three steps from the simulator to the real track.</p>
           </div>
         </FadeUp>

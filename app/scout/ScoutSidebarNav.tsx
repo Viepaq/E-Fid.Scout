@@ -70,10 +70,10 @@ export default function ScoutSidebarNav({ displayName }: { displayName: string }
       <aside className="hidden lg:flex w-60 shrink-0 h-screen flex-col bg-[#111111] border-r border-[#222222]">
         <div className="px-6 py-5 border-b border-[#222222]">
           <span className="text-[20px] font-bold tracking-tight leading-none">
-            <span className="text-white">Scout</span>
-            <span className="text-[#22c55e]"> Dashboard</span>
+            <span className="text-white">Kaimann</span>
+            <span className="text-[#22c55e]"> Racing</span>
           </span>
-          <p className="text-[#444] text-xs mt-1">Talent Scout Dashboard</p>
+          <p className="text-[#444] text-xs mt-1">Scout Dashboard</p>
         </div>
 
         <nav className="flex-1 px-3 py-4 space-y-0.5">
@@ -102,8 +102,8 @@ export default function ScoutSidebarNav({ displayName }: { displayName: string }
       {/* ── Mobile top bar (fixed) ──────────────────────────────────────── */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 h-14 bg-[#111111] border-b border-[#222222]">
         <span className="text-[16px] font-bold tracking-tight leading-none">
-          <span className="text-white">Scout</span>
-          <span className="text-[#22c55e]"> Dashboard</span>
+          <span className="text-white">Kaimann</span>
+          <span className="text-[#22c55e]"> Racing</span>
         </span>
         <button
           onClick={() => setMobileOpen(true)}
@@ -134,8 +134,8 @@ export default function ScoutSidebarNav({ displayName }: { displayName: string }
         >
           <div className="flex items-center justify-between px-4 h-14 bg-[#111111] border-b border-[#222222]">
             <span className="text-[16px] font-bold tracking-tight leading-none">
-              <span className="text-white">Scout</span>
-              <span className="text-[#22c55e]"> Dashboard</span>
+              <span className="text-white">Kaimann</span>
+              <span className="text-[#22c55e]"> Racing</span>
             </span>
             <button
               onClick={() => setMobileOpen(false)}

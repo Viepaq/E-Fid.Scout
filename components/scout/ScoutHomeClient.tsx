@@ -116,7 +116,7 @@ export default function ScoutHomeClient({ scoutName, stats, topDrivers }: Props)
               className="text-[11px] font-bold uppercase"
               style={{ color: '#22c55e', letterSpacing: '0.18em' }}
             >
-              FID-Scout · Talent Intelligence
+              Kaimann Racing · Talent Intelligence
             </p>
             <h1 className="text-[26px] lg:text-[30px] font-extrabold text-white leading-tight">
               Welcome back, {firstName}.
@@ -329,7 +329,7 @@ export default function ScoutHomeClient({ scoutName, stats, topDrivers }: Props)
               {
                 color: '#22c55e',
                 label: 'Qualifier',
-                desc: 'Invited to a physical qualifier event by FID-Scout scouting partners.',
+                desc: 'Invited to a physical qualifier event by Kaimann Racing scouting partners.',
               },
             ].map(({ color, label, desc }) => (
               <div key={label} className="flex gap-3 items-start">

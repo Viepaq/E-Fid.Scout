@@ -1,6 +1,6 @@
-# FID-Scout
+# Kaimann Racing
 
-Sim-racing talent scouting platform. Drivers connect their iRacing account, get a talent score across 5 dimensions, and top performers get discovered by the FAT Karting League.
+Sim-racing talent scouting platform. Drivers connect their iRacing account, get a talent score across 5 dimensions, and top performers get discovered by Kaimann Racing.
 
 ## Tech Stack
 

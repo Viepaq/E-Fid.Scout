@@ -159,8 +159,8 @@ function Navbar() {
         className="flex items-center justify-between px-4 lg:px-8 py-4"
       >
         <span className="text-lg font-bold tracking-tight">
-          <span className="text-white">FID</span>
-          <span style={{ color: A }}>-Scout</span>
+          <span className="text-white">Kaimann</span>
+          <span style={{ color: A }}> Racing</span>
         </span>
 
         {/* Desktop links */}
@@ -214,8 +214,8 @@ function Navbar() {
             style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}
           >
             <span className="text-lg font-bold tracking-tight">
-              <span className="text-white">FID</span>
-              <span style={{ color: A }}>-Scout</span>
+              <span className="text-white">Kaimann</span>
+              <span style={{ color: A }}> Racing</span>
             </span>
             <button
               onClick={() => setMobileOpen(false)}
@@ -860,7 +860,7 @@ export default function LandingPageClient() {
             </h1>
 
             <p className="text-lg lg:text-xl text-[#888888] max-w-xl mx-auto leading-relaxed">
-              FID-Scout analyzes your iRacing performance and opens the door to real-world motorsport.
+              Kaimann Racing analyzes your iRacing performance and opens the door to real-world motorsport.
             </p>
 
             <div className="flex flex-col items-stretch sm:flex-row sm:items-center sm:justify-center gap-4 pt-2">
@@ -1023,11 +1023,11 @@ export default function LandingPageClient() {
         <footer className="py-8 px-4 lg:px-6" style={{ backgroundColor: PAGE_BG }}>
           <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
             <span className="text-lg font-bold tracking-tight">
-              <span className="text-white">FID</span>
-              <span style={{ color: A }}>-Scout</span>
+              <span className="text-white">Kaimann</span>
+              <span style={{ color: A }}> Racing</span>
             </span>
             <div className="text-center space-y-0.5">
-              <p className="text-sm text-[#555]">© 2026 FID-Scout</p>
+              <p className="text-sm text-[#555]">© 2026 Kaimann Racing</p>
               <p
                 className="text-[#3a3a3a]"
                 style={{ fontSize: '11px', letterSpacing: '0.04em' }}
