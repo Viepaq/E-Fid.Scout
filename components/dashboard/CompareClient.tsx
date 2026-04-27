@@ -287,8 +287,8 @@ export default function CompareClient({
   // Auto-generate insights
   const insights = useMemo(() => {
     const lines: { text: string; type: 'good' | 'info' | 'warn' }[] = [];
-    const nameA = driverName(metaA, sessionA);
-    const nameB = driverName(metaB, sessionB);
+    const nameA = sessionA.session_label || driverName(metaA, sessionA);
+    const nameB = sessionB.session_label || driverName(metaB, sessionB);
 
     if (sessionA.fastest_lap_ms && sessionB.fastest_lap_ms) {
       const diff = Math.abs(sessionA.fastest_lap_ms - sessionB.fastest_lap_ms);
