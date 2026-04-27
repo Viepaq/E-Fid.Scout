@@ -67,12 +67,9 @@ function driverName(meta: TelemetryMeta | null, s: SessionRow): string {
 
 /** Short label that always uniquely identifies a session in charts/legends */
 function seriesLabel(slot: 'A' | 'B', s: SessionRow, meta: TelemetryMeta | null): string {
-  const track = s.session_label || s.track_name || '';
-  const driver = meta?.driverName ?? '';
-  if (track && driver && track !== driver) return `${slot}: ${driver} @ ${track}`;
-  if (track) return `${slot}: ${track}`;
-  if (driver) return `${slot}: ${driver}`;
-  return `Session ${slot}`;
+  // session_label (user-defined name) is always the primary identifier
+  const name = s.session_label || s.track_name || meta?.driverName || '';
+  return name ? `${slot}: ${name}` : `Session ${slot}`;
 }
 
 function fmtLapSec(s: number): string {
@@ -361,9 +358,11 @@ export default function CompareClient({
       <div className="mb-8">
         <p className="text-[10px] uppercase tracking-[0.15em] text-[#e8143c] font-bold mb-1">Head-to-Head</p>
         <h1 className="text-[26px] font-extrabold text-white">Session Comparison</h1>
-        {sessionA.track_name && sessionA.track_name === sessionB.track_name && (
-          <p className="text-[14px] text-slate-500 mt-1">{sessionA.track_name}</p>
-        )}
+        <p className="text-[14px] text-slate-500 mt-1">
+          {sessionA.session_label || sessionA.track_name || 'Session A'}
+          {' vs '}
+          {sessionB.session_label || sessionB.track_name || 'Session B'}
+        </p>
       </div>
 
       {/* Session header cards */}
@@ -389,8 +388,11 @@ export default function CompareClient({
               <span className="text-[11px] text-slate-600 truncate">{fmtDate(s.race_date)}</span>
             </div>
             <p className="text-[15px] sm:text-[17px] font-bold text-white truncate mb-0.5">
-              {driverName(meta, s)}
+              {s.session_label || driverName(meta, s)}
             </p>
+            {s.session_label && meta?.driverName && (
+              <p className="text-[12px] text-slate-400 truncate">{meta.driverName}</p>
+            )}
             {s.track_name && <p className="text-[12px] text-slate-500 truncate">{s.track_name}</p>}
             {s.car_name && <p className="text-[11px] text-slate-600 truncate mt-0.5">{s.car_name}</p>}
           </div>
