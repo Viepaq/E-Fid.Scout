@@ -613,7 +613,7 @@ export default function CompareClient({
                   width={56}
                 />
                 <Tooltip
-                  formatter={(v: any, name: string) => [
+                  formatter={(v: any, name: any) => [
                     fmtLapSec(v),
                     seriesLabel(name === 'a' ? 'A' : 'B', name === 'a' ? sessionA : sessionB, name === 'a' ? metaA : metaB),
                   ]}
