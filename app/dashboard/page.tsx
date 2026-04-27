@@ -133,7 +133,7 @@ export default async function DashboardPage() {
             <RecentRaces raceResults={raceResults} />
           </div>
           <div className="lg:col-span-2">
-            <SectionLabel icon="✦" text="Insights" />
+            <SectionLabel text="Insights" />
             <InsightsBox insightsText={latestScore.insights_text} />
           </div>
         </div>
