@@ -3,6 +3,7 @@
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import type { IBTResult } from '@/lib/ibt-parser';
+import { parseIBTFromArrayBuffer } from '@/lib/ibt-parser';
 import { saveTelemetrySession } from '@/app/dashboard/telemetry/actions';
 import AnalysisResultsView, { scoreColor, fmtLapTime } from '@/components/dashboard/AnalysisResultsView';
 
@@ -95,17 +96,14 @@ export default function TelemetryClient({ userId, displayName }: {
     setLoading(true); setError(null);
     const timers = STEP_DELAYS.map((delay, i) => setTimeout(() => setLoadingStep(i + 1), delay));
     try {
-      const fd = new FormData();
-      fd.append('file', file);
-      const [res] = await Promise.all([
-        fetch('/api/telemetry/parse', { method: 'POST', body: fd }),
+      const [ab] = await Promise.all([
+        file.arrayBuffer(),
         new Promise<void>((r) => setTimeout(r, 2000)),
       ]);
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error ?? 'Parse failed');
-      setResult(json as IBTResult);
+      const parsed = parseIBTFromArrayBuffer(ab);
+      setResult(parsed);
     } catch (e: any) {
-      setError(e.message);
+      setError(e instanceof Error ? e.message : 'Failed to parse file');
     } finally {
       timers.forEach(clearTimeout);
       setLoading(false); setLoadingStep(0);

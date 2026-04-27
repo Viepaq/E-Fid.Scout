@@ -255,6 +255,10 @@ function resampleLap(samples: LapSample[]): LapChartData {
 
 // ─── Main parser ──────────────────────────────────────────────────────────────
 
+export function parseIBTFromArrayBuffer(ab: ArrayBuffer): IBTResult {
+  return parseIBT(Buffer.from(ab));
+}
+
 export function parseIBT(buffer: Buffer): IBTResult {
   // ── Header ────────────────────────────────────────────────────────────────
   const sessionInfoLen    = buffer.readInt32LE(0x70);
