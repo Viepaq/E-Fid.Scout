@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import RegisterForm from './RegisterForm';
 
 export const metadata: Metadata = {
-  title: 'Create Account — Kaimann Racing',
+  title: 'Create Account — Kaimann Racing Analytics',
 };
 
 export default function RegisterPage() {

@@ -19,42 +19,37 @@ type Criterion = {
   met: boolean;
   current: string;
   target: string;
-  nextGoalText: string; // human-readable goal description
+  nextGoalText: string;
 };
 
 // ─── Status config ────────────────────────────────────────────────────────────
 
 const STATUS_CONFIG: Record<
   ScoutingStatus,
-  { badge: string; badgeText: string; motivation: string }
+  { badgeText: string; badgeCls: string; motivation: string }
 > = {
   none: {
-    badge: 'bg-[#222222] text-[#888888] border border-[#333333]',
+    badgeCls: 'bg-white/5 text-slate-500 border border-white/[0.10]',
     badgeText: 'No Scout Status Yet',
-    motivation:
-      'You are on your way. Meet the Watch List criteria to get noticed by scouts.',
+    motivation: 'You are on your way. Meet the Watch List criteria to get noticed by scouts.',
   },
   watchlist: {
-    badge: 'bg-blue-500/20 text-blue-400 border border-blue-500/40',
+    badgeCls: 'bg-blue-500/10 text-blue-400 border border-blue-500/20',
     badgeText: 'Watch List',
-    motivation:
-      "You are on the scouts' radar. Stay consistent and work toward the Talent Pool.",
+    motivation: "You are on the scouts' radar. Stay consistent and work toward the Talent Pool.",
   },
   talent_pool: {
-    badge: 'bg-amber-500/20 text-amber-400 border border-amber-500/40',
+    badgeCls: 'bg-[#f59e0b]/10 text-[#f59e0b] border border-[#f59e0b]/20',
     badgeText: 'Talent Pool',
-    motivation:
-      'You are in the Talent Pool. A Qualifier Event awaits.',
+    motivation: 'You are in the Talent Pool. A Qualifier Event awaits.',
   },
   qualifier_invited: {
-    badge: 'bg-green-500/20 text-green-400 border border-green-500/40',
+    badgeCls: 'bg-[#e8143c]/10 text-[#e8143c] border border-[#e8143c]/20',
     badgeText: 'Qualifier Invited',
-    motivation:
-      'Congratulations. You have been invited to a Qualifier Event. Check your email.',
+    motivation: 'Congratulations. You have been invited to a Qualifier Event. Check your email.',
   },
 };
 
-// Stage order for the pathway visual
 type Stage = 'watchlist' | 'talent_pool' | 'qualifier_invited' | 'fat_tryout';
 const STAGE_ORDER: Stage[] = ['watchlist', 'talent_pool', 'qualifier_invited', 'fat_tryout'];
 
@@ -68,14 +63,34 @@ function stageState(
     qualifier_invited: 'qualifier_invited',
   };
   const currentStage = statusToStage[status];
-
-  if (!currentStage) return 'future'; // 'none' → everything is future/target
+  if (!currentStage) return 'future';
   const currentIdx = STAGE_ORDER.indexOf(currentStage);
-  const stageIdx = STAGE_ORDER.indexOf(stage);
-
+  const stageIdx   = STAGE_ORDER.indexOf(stage);
   if (stageIdx < currentIdx) return 'completed';
   if (stageIdx === currentIdx) return 'current';
   return 'future';
+}
+
+// ─── KPI Card ─────────────────────────────────────────────────────────────────
+
+function KpiCard({
+  label,
+  value,
+  sub,
+  valueCls = 'text-white',
+}: {
+  label: string;
+  value: string;
+  sub: string;
+  valueCls?: string;
+}) {
+  return (
+    <div className="bg-[#13131e] border border-white/[0.07] rounded-2xl p-5 shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:border-white/[0.12] transition-colors">
+      <p className="text-[10px] text-slate-600 uppercase tracking-[0.14em] font-semibold mb-3">{label}</p>
+      <p className={`text-3xl font-black leading-none ${valueCls}`}>{value}</p>
+      <p className="text-[11px] text-slate-700 mt-2">{sub}</p>
+    </div>
+  );
 }
 
 // ─── Checklist item ───────────────────────────────────────────────────────────
@@ -84,24 +99,24 @@ function CheckItem({ c }: { c: Criterion }) {
   return (
     <div className="flex items-start gap-3">
       <div
-        className={`mt-0.5 w-5 h-5 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${
+        className={`mt-0.5 w-6 h-6 rounded-xl flex items-center justify-center shrink-0 text-[11px] font-bold border ${
           c.met
-            ? 'bg-[#22c55e]/20 text-[#22c55e]'
-            : 'bg-[#ef4444]/15 text-[#ef4444]'
+            ? 'bg-[#22c55e]/10 text-[#22c55e] border-[#22c55e]/20'
+            : 'bg-[#e8143c]/10 text-[#e8143c] border-[#e8143c]/20'
         }`}
       >
         {c.met ? '✓' : '✗'}
       </div>
       <div className="space-y-0.5 min-w-0">
-        <p className="text-sm text-white font-medium leading-tight">{c.label}</p>
+        <p className="text-sm text-slate-200 font-medium leading-tight">{c.label}</p>
         <div className="flex items-center gap-2 text-xs flex-wrap">
-          <span className={c.met ? 'text-[#22c55e]' : 'text-[#888888]'}>
+          <span className={c.met ? 'text-[#22c55e] font-semibold' : 'text-slate-500'}>
             Now: {c.current}
           </span>
           {!c.met && (
             <>
-              <span className="text-[#444444]">·</span>
-              <span className="text-[#666666]">Need: {c.target}</span>
+              <span className="text-slate-700">·</span>
+              <span className="text-slate-600">Need: {c.target}</span>
             </>
           )}
         </div>
@@ -121,39 +136,38 @@ function StageCard({
   state: 'completed' | 'current' | 'future';
   children: React.ReactNode;
 }) {
-  const borderColor =
+  const borderCls =
     state === 'completed'
-      ? 'border-[#22c55e]/40'
+      ? 'border-[#22c55e]/25 bg-[#22c55e]/[0.02]'
       : state === 'current'
-        ? 'border-[#e8143c]/50'
-        : 'border-[#222222]';
+        ? 'border-[#e8143c]/35 bg-[#e8143c]/[0.03]'
+        : 'border-white/[0.07]';
 
-  const opacity = state === 'future' ? 'opacity-40' : 'opacity-100';
+  const opacity = state === 'future' ? 'opacity-35' : 'opacity-100';
 
-  const headerColor =
+  const headerCls =
     state === 'completed'
       ? 'text-[#22c55e]'
       : state === 'current'
-        ? 'text-[#e8143c]'
-        : 'text-[#888888]';
+        ? 'text-white'
+        : 'text-slate-600';
 
   const badge =
     state === 'completed' ? (
-      <span className="text-[10px] font-semibold text-[#22c55e] bg-[#22c55e]/10 border border-[#22c55e]/30 px-1.5 py-0.5 rounded-full uppercase tracking-wide">
+      <span className="text-[10px] font-bold text-[#22c55e] bg-[#22c55e]/10 border border-[#22c55e]/20 px-2 py-0.5 rounded-full uppercase tracking-widest">
         Completed
       </span>
     ) : state === 'current' ? (
-      <span className="text-[10px] font-semibold text-[#e8143c] bg-[#e8143c]/10 border border-[#e8143c]/30 px-1.5 py-0.5 rounded-full uppercase tracking-wide">
-        Current
+      <span className="flex items-center gap-1.5 text-[10px] font-bold text-[#e8143c] bg-[#e8143c]/10 border border-[#e8143c]/20 px-2 py-0.5 rounded-full uppercase tracking-widest">
+        <span className="w-1.5 h-1.5 rounded-full bg-[#e8143c] animate-pulse shadow-[0_0_4px_rgba(232,20,60,0.7)]" />
+        Active
       </span>
     ) : null;
 
   return (
-    <div
-      className={`bg-[#111111] border rounded-xl p-5 transition-opacity ${borderColor} ${opacity}`}
-    >
+    <div className={`bg-[#13131e] border rounded-2xl p-5 transition-all shadow-[0_4px_20px_rgba(0,0,0,0.5)] ${borderCls} ${opacity}`}>
       <div className="flex items-center justify-between mb-4">
-        <h3 className={`text-sm font-bold uppercase tracking-wider ${headerColor}`}>
+        <h3 className={`text-[10px] font-bold uppercase tracking-[0.14em] ${headerCls}`}>
           {title}
         </h3>
         {badge}
@@ -173,7 +187,7 @@ function Arrow({ active }: { active: boolean }) {
         height="20"
         viewBox="0 0 16 20"
         fill="none"
-        className={active ? 'text-[#e8143c]' : 'text-[#333333]'}
+        className={active ? 'text-[#e8143c]' : 'text-slate-700'}
       >
         <path
           d="M8 0 L8 14 M3 10 L8 16 L13 10"
@@ -268,16 +282,8 @@ export default async function PathwayPage() {
       .order('calculated_at', { ascending: false })
       .limit(1)
       .maybeSingle(),
-    db
-      .from('scouting_status')
-      .select('status')
-      .eq('user_id', user.id)
-      .maybeSingle(),
-    db
-      .from('race_results')
-      .select('track_name, race_date')
-      .eq('user_id', user.id)
-      .gte('race_date', cutoff90),
+    db.from('scouting_status').select('status').eq('user_id', user.id).maybeSingle(),
+    db.from('race_results').select('track_name, race_date').eq('user_id', user.id).gte('race_date', cutoff90),
     db
       .from('iracing_history')
       .select('safety_rating')
@@ -287,15 +293,15 @@ export default async function PathwayPage() {
       .maybeSingle(),
   ]);
 
-  const scoreData = scoreResult.data as { score_learning_rate: number; age_group_percentile: number | null } | null;
-  const statusData = statusResult.data as { status: ScoutingStatus } | null;
-  const races = (racesResult.data ?? []) as { track_name: string | null; race_date: string | null }[];
+  const scoreData   = scoreResult.data as { score_learning_rate: number; age_group_percentile: number | null } | null;
+  const statusData  = statusResult.data as { status: ScoutingStatus } | null;
+  const races       = (racesResult.data ?? []) as { track_name: string | null; race_date: string | null }[];
   const historyData = historyResult.data as { safety_rating: number | null } | null;
 
   if (!scoreData) {
     return (
       <div className="p-8 flex items-center justify-center h-80">
-        <p className="text-[#888888] text-sm">
+        <p className="text-slate-500 text-sm">
           Your score is still being calculated. Check back shortly.
         </p>
       </div>
@@ -303,54 +309,69 @@ export default async function PathwayPage() {
   }
 
   const metrics: Metrics = {
-    percentile: scoreData.age_group_percentile ?? 50,
-    learningRate: scoreData.score_learning_rate,
-    races90d: races.length,
+    percentile:      scoreData.age_group_percentile ?? 50,
+    learningRate:    scoreData.score_learning_rate,
+    races90d:        races.length,
     uniqueTracks90d: new Set(races.map((r) => r.track_name).filter(Boolean)).size,
-    currentSafety: historyData?.safety_rating ?? 0,
-    scoutingStatus: statusData?.status ?? 'none',
+    currentSafety:   historyData?.safety_rating ?? 0,
+    scoutingStatus:  statusData?.status ?? 'none',
   };
 
   const { scoutingStatus } = metrics;
   const statusCfg = STATUS_CONFIG[scoutingStatus];
 
-  const watchlistCriteria = buildWatchlistCriteria(metrics);
+  const watchlistCriteria  = buildWatchlistCriteria(metrics);
   const talentPoolCriteria = buildTalentPoolCriteria(metrics);
 
-  // First unmet criterion across both stages
-  const allCriteria = [...watchlistCriteria, ...talentPoolCriteria];
-  const firstUnmet = allCriteria.find((c) => !c.met);
+  const allCriteria  = [...watchlistCriteria, ...talentPoolCriteria];
+  const firstUnmet   = allCriteria.find((c) => !c.met);
+  const metCount     = allCriteria.filter((c) => c.met).length;
+  const totalCount   = allCriteria.length;
+  const topPct       = 100 - metrics.percentile;
 
-  // Arrow active states
   const watchState  = stageState('watchlist', scoutingStatus);
   const poolState   = stageState('talent_pool', scoutingStatus);
   const qualState   = stageState('qualifier_invited', scoutingStatus);
   const tryoutState = stageState('fat_tryout', scoutingStatus);
 
   return (
-    <div className="px-4 py-6 lg:p-8 space-y-6 lg:space-y-8 max-w-2xl">
+    <div className="px-4 py-6 lg:px-8 lg:py-8 space-y-6 lg:space-y-7 max-w-2xl">
 
-      {/* ── Status banner ────────────────────────────────────────────────── */}
-      <div className="space-y-3">
-        <div
-          className={`inline-flex items-center px-4 py-2 rounded-full text-base font-bold border ${statusCfg.badge}`}
-        >
-          {statusCfg.badgeText}
-        </div>
-        <p className="text-[#888888] text-sm leading-relaxed max-w-md">
-          {statusCfg.motivation}
-        </p>
+      {/* ── Page header ──────────────────────────────────────────────────── */}
+      <div>
+        <p className="text-[10px] text-slate-600 uppercase tracking-[0.15em] font-semibold mb-1.5">Scouting Pathway</p>
+        <h1 className="text-2xl font-extrabold text-white">Your Progress</h1>
+      </div>
+
+      {/* ── KPI cards ────────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-3 gap-3">
+        <KpiCard
+          label="Status"
+          value={scoutingStatus === 'none' ? 'None' : statusCfg.badgeText}
+          sub="scouting level"
+          valueCls={scoutingStatus !== 'none' ? 'text-[#e8143c]' : 'text-slate-600'}
+        />
+        <KpiCard
+          label="Criteria Met"
+          value={`${metCount}/${totalCount}`}
+          sub="requirements"
+          valueCls={metCount === totalCount ? 'text-[#e8143c]' : 'text-white'}
+        />
+        <KpiCard
+          label="Age Group Rank"
+          value={`Top ${topPct}%`}
+          sub="percentile"
+          valueCls={topPct <= 10 ? 'text-[#e8143c]' : topPct <= 30 ? 'text-[#f59e0b]' : 'text-white'}
+        />
       </div>
 
       {/* ── Pathway visual ───────────────────────────────────────────────── */}
       <div>
-        <h2 className="text-xs font-semibold text-[#888888] uppercase tracking-wide mb-4">
-          Scouting Pathway
-        </h2>
+        <p className="text-[10px] text-slate-600 uppercase tracking-[0.14em] font-semibold mb-4">Pathway Stages</p>
 
         <div className="space-y-0">
           {/* Stage 1 — Watch List */}
-          <StageCard title="Watch List" state={watchState}>
+          <StageCard title="Stage 1 — Watch List" state={watchState}>
             <div className="space-y-3">
               {watchlistCriteria.map((c) => (
                 <CheckItem key={c.label} c={c} />
@@ -361,7 +382,7 @@ export default async function PathwayPage() {
           <Arrow active={watchState === 'completed' || scoutingStatus === 'watchlist'} />
 
           {/* Stage 2 — Talent Pool */}
-          <StageCard title="Talent Pool" state={poolState}>
+          <StageCard title="Stage 2 — Talent Pool" state={poolState}>
             <div className="space-y-3">
               {talentPoolCriteria.map((c) => (
                 <CheckItem key={c.label} c={c} />
@@ -372,8 +393,8 @@ export default async function PathwayPage() {
           <Arrow active={poolState === 'completed' || scoutingStatus === 'talent_pool'} />
 
           {/* Stage 3 — Qualifier Event */}
-          <StageCard title="Qualifier Event" state={qualState}>
-            <p className="text-sm text-[#888888] leading-relaxed">
+          <StageCard title="Stage 3 — Qualifier Event" state={qualState}>
+            <p className="text-sm text-slate-500 leading-relaxed">
               By invitation only — top Talent Pool drivers receive Qualifier Event
               invitations via email.
             </p>
@@ -382,8 +403,8 @@ export default async function PathwayPage() {
           <Arrow active={qualState === 'completed' || scoutingStatus === 'qualifier_invited'} />
 
           {/* Stage 4 — Real Motorsport Tryout */}
-          <StageCard title="Real Motorsport Tryout" state={tryoutState}>
-            <p className="text-sm text-[#888888] leading-relaxed">
+          <StageCard title="Stage 4 — Real Motorsport Tryout" state={tryoutState}>
+            <p className="text-sm text-slate-500 leading-relaxed">
               Winners of Qualifier Events receive an invitation to a physical
               real-world motorsport tryout with our scouting partners.
             </p>
@@ -393,22 +414,25 @@ export default async function PathwayPage() {
 
       {/* ── Next goal ────────────────────────────────────────────────────── */}
       {firstUnmet ? (
-        <div className="bg-[#1a1a1a] border border-[#333333] rounded-xl p-5 border-l-[3px] border-l-[#e8143c]">
-          <p className="text-xs font-semibold text-[#888888] uppercase tracking-wide mb-1">
+        <div className="relative overflow-hidden bg-[#13131e] border border-white/[0.07] rounded-2xl p-5">
+          <div className="absolute top-0 left-0 w-1 h-full bg-[#e8143c] rounded-full" />
+          <p className="text-[10px] text-slate-600 uppercase tracking-[0.14em] font-semibold mb-2 pl-3">
             Your next goal
           </p>
-          <p className="text-sm text-[#cccccc] leading-relaxed">
+          <p className="text-sm text-slate-300 leading-relaxed pl-3">
             {firstUnmet.nextGoalText}
           </p>
         </div>
       ) : (
-        <div className="bg-[#1a1a1a] border border-[#333333] rounded-xl p-5 border-l-[3px] border-l-[#22c55e]">
-          <p className="text-sm text-[#cccccc]">
-            🏆{' '}
-            <span className="text-white font-semibold">
-              All criteria met.
-            </span>{' '}
-            You have satisfied every requirement — keep performing at this level.
+        <div className="relative overflow-hidden bg-[#13131e] border border-white/[0.07] rounded-2xl p-5">
+          <div className="absolute top-0 left-0 w-1 h-full bg-[#22c55e] rounded-full" />
+          <div className="flex items-center gap-2 mb-2 pl-3">
+            <span className="w-2 h-2 rounded-full bg-[#22c55e] animate-pulse shadow-[0_0_6px_rgba(34,197,94,0.6)]" />
+            <p className="text-[10px] text-[#22c55e] uppercase tracking-[0.14em] font-bold">All criteria met</p>
+          </div>
+          <p className="text-sm text-slate-300 pl-3">
+            <span className="text-white font-semibold">You have satisfied every requirement.</span>{' '}
+            Keep performing at this level.
           </p>
         </div>
       )}

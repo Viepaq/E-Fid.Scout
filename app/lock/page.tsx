@@ -1,14 +1,12 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { useRouter } from 'next/navigation';
 
 export default function LockPage() {
   const [password, setPassword]   = useState('');
   const [error, setError]         = useState('');
   const [loading, setLoading]     = useState(false);
   const inputRef                  = useRef<HTMLInputElement>(null);
-  const router                    = useRouter();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -23,8 +21,9 @@ export default function LockPage() {
       });
 
       if (res.ok) {
-        router.refresh();
-        router.push('/');
+        // Hard reload so the browser sends the new cookie in a fresh request
+        // and middleware sees it immediately.
+        window.location.href = '/';
       } else {
         setError('Incorrect password. Try again.');
         setPassword('');

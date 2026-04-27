@@ -26,7 +26,7 @@ export default async function DashboardLayout({
   const role = (profile?.role ?? 'user') as UserRole;
 
   return (
-    <div className="flex h-screen bg-[#0a0a0a] overflow-hidden">
+    <div className="flex h-screen bg-[#0d0d18] overflow-hidden">
       <SidebarNav displayName={displayName} role={role} />
       <main className="flex-1 overflow-y-auto min-w-0 pt-14 lg:pt-0">
         {children}

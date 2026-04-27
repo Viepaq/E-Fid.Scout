@@ -7,7 +7,7 @@ export async function middleware(request: NextRequest) {
   // ── Lock screen — checked before everything else ──────────────────────────
   const lockExempt =
     pathname === "/lock" ||
-    pathname.startsWith("/api/unlock");
+    pathname.startsWith("/api/");
 
   const unlocked = request.cookies.get("site-unlocked")?.value === "true";
 
@@ -58,6 +58,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|api/|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

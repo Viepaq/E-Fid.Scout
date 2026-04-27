@@ -13,15 +13,14 @@ type Props = {
   scoutingStatus: ScoutingStatus | 'none';
 };
 
-// ─── Fade-up animation hook ────────────────────────────────────────────────────
+// ─── Fade-up animation ────────────────────────────────────────────────────────
 function useFadeUp(ref: React.RefObject<HTMLElement | null>, delay = 0) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     el.style.opacity = '0';
-    el.style.transform = 'translateY(16px)';
-    el.style.transition = `opacity 500ms cubic-bezier(0.16,1,0.3,1) ${delay}ms, transform 500ms cubic-bezier(0.16,1,0.3,1) ${delay}ms`;
-
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = `opacity 600ms cubic-bezier(0.16,1,0.3,1) ${delay}ms, transform 600ms cubic-bezier(0.16,1,0.3,1) ${delay}ms`;
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -37,25 +36,72 @@ function useFadeUp(ref: React.RefObject<HTMLElement | null>, delay = 0) {
   }, [delay, ref]);
 }
 
-function FadeUp({ children, delay = 0, className = '', style }: { children: React.ReactNode; delay?: number; className?: string; style?: React.CSSProperties }) {
+function FadeUp({
+  children,
+  delay = 0,
+  className = '',
+}: {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   useFadeUp(ref as React.RefObject<HTMLElement>, delay);
   return (
-    <div ref={ref} className={className} style={style}>
+    <div ref={ref} className={className}>
       {children}
     </div>
   );
 }
 
-// ─── Score tier label ─────────────────────────────────────────────────────────
-function scoreTier(value: number) {
-  if (value >= 80) return { label: 'Elite', color: '#CB3C33' };
-  if (value >= 60) return { label: 'Strong', color: '#f59e0b' };
-  if (value >= 40) return { label: 'Competitive', color: '#3b82f6' };
-  return { label: 'Developing', color: '#888888' };
+// ─── Score ring ───────────────────────────────────────────────────────────────
+function ScoreRing({ value }: { value: number | null }) {
+  const radius = 54;
+  const circ = 2 * Math.PI * radius;
+  const filled = value !== null ? (value / 100) * circ : 0;
+
+  return (
+    <div className="flex flex-col items-center gap-3 shrink-0">
+      <div className="relative w-36 h-36">
+        {/* viewBox padded so drop-shadow isn't clipped */}
+        <svg className="w-full h-full -rotate-90" viewBox="-8 -8 136 136">
+          <circle cx="60" cy="60" r={radius} fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="7" />
+          {value !== null && (
+            <circle
+              cx="60" cy="60" r={radius}
+              fill="none"
+              stroke="#e8143c"
+              strokeWidth="7"
+              strokeDasharray={`${filled} ${circ}`}
+              strokeLinecap="round"
+              style={{ filter: 'drop-shadow(0 0 4px rgba(232,20,60,0.6))' }}
+            />
+          )}
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-0.5">
+          <span className="text-[34px] font-black text-white leading-none">
+            {value ?? '—'}
+          </span>
+          <span className="text-[9px] text-slate-500 uppercase tracking-[0.14em]">Score</span>
+        </div>
+      </div>
+      <div className="text-center">
+        <p className="text-[10px] font-bold text-[#e8143c] uppercase tracking-[0.15em]">Talent Score</p>
+        <p className="text-[10px] text-slate-700 mt-0.5">Updated every 24h</p>
+      </div>
+    </div>
+  );
 }
 
-// ─── Pathway status helper ────────────────────────────────────────────────────
+// ─── Score tier ───────────────────────────────────────────────────────────────
+function scoreTier(value: number): { label: string; colorCls: string } {
+  if (value >= 80) return { label: 'Elite',       colorCls: 'text-[#e8143c]' };
+  if (value >= 60) return { label: 'Strong',      colorCls: 'text-[#f59e0b]' };
+  if (value >= 40) return { label: 'Competitive', colorCls: 'text-blue-400' };
+  return              { label: 'Developing',  colorCls: 'text-slate-500' };
+}
+
+// ─── Pathway status ───────────────────────────────────────────────────────────
 type StageStatus = 'completed' | 'current' | 'future';
 
 function pathwayStageStatus(
@@ -72,39 +118,15 @@ function pathwayStageStatus(
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-function ScoreCircle({ value }: { value: number | null }) {
-  const display = value ?? null;
-  const radius = 54;
-  const circ = 2 * Math.PI * radius;
-  const filled = display !== null ? (display / 100) * circ : 0;
-
+function SectionLabel({ eyebrow, title, sub }: { eyebrow: string; title: string; sub?: string }) {
   return (
-    <div className="flex flex-col items-center gap-2">
-      <div className="relative w-36 h-36">
-        <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
-          <circle cx="60" cy="60" r={radius} fill="none" stroke="#222222" strokeWidth="8" />
-          {display !== null && (
-            <circle
-              cx="60" cy="60" r={radius}
-              fill="none"
-              stroke="#CB3C33"
-              strokeWidth="8"
-              strokeDasharray={`${filled} ${circ}`}
-              strokeLinecap="round"
-            />
-          )}
-        </svg>
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-3xl font-black text-white leading-none">
-            {display ?? '—'}
-          </span>
-        </div>
+    <FadeUp delay={0}>
+      <div className="space-y-1 mb-6">
+        <p className="text-[10px] text-slate-600 uppercase tracking-[0.15em] font-semibold">{eyebrow}</p>
+        <h2 className="text-xl font-extrabold text-white">{title}</h2>
+        {sub && <p className="text-sm text-slate-500">{sub}</p>}
       </div>
-      <p className="text-[11px] text-[#CB3C33] uppercase tracking-[0.15em] font-semibold">
-        Your Talent Score
-      </p>
-      <p className="text-[11px] text-[#555555]">Updated every 24h</p>
-    </div>
+    </FadeUp>
   );
 }
 
@@ -122,16 +144,19 @@ function StepCard({
   delay: number;
 }) {
   return (
-    <FadeUp delay={delay} className="relative bg-[#111111] border border-[#222222] border-l-2 border-l-[#CB3C33] rounded-xl p-6 overflow-hidden hover:border-[rgba(203,60,51,0.5)] transition-colors group">
-      <span className="absolute top-3 right-4 text-6xl font-black text-[#CB3C33] opacity-10 leading-none select-none">
+    <FadeUp
+      delay={delay}
+      className="relative bg-[#13131e] border border-white/[0.07] rounded-2xl p-6 overflow-hidden hover:border-[#e8143c]/25 hover:bg-[#1a1a28] transition-all duration-200 shadow-[0_4px_20px_rgba(0,0,0,0.4)] group"
+    >
+      <span className="absolute top-4 right-5 text-[64px] font-black text-white/[0.03] leading-none select-none group-hover:text-[#e8143c]/[0.05] transition-colors">
         {number}
       </span>
       <div className="relative z-10 space-y-3">
-        <div className="w-8 h-8 flex items-center justify-center text-white">
+        <div className="w-9 h-9 rounded-xl bg-[#e8143c]/10 border border-[#e8143c]/20 flex items-center justify-center text-[#e8143c]">
           {icon}
         </div>
         <p className="font-bold text-white text-sm">{title}</p>
-        <p className="text-[#888888] text-sm leading-relaxed">{description}</p>
+        <p className="text-slate-500 text-sm leading-relaxed">{description}</p>
       </div>
     </FadeUp>
   );
@@ -149,19 +174,26 @@ function DimensionCard({
   delay: number;
 }) {
   const tier = value !== null ? scoreTier(value) : null;
+
+  const barColor =
+    value !== null && value >= 80 ? 'bg-[#e8143c] shadow-[0_0_10px_rgba(232,20,60,0.4)]' :
+    value !== null && value >= 60 ? 'bg-[#f59e0b]' :
+    value !== null && value >= 40 ? 'bg-blue-500' :
+    'bg-slate-600';
+
   return (
-    <FadeUp delay={delay} className="bg-[#111111] border border-[#222222] rounded-xl p-4 space-y-3">
-      <p className="text-[11px] text-[#CB3C33] uppercase tracking-[0.1em] font-semibold">{label}</p>
-      <p className="text-3xl font-black text-white">{value ?? '?'}</p>
-      <div className="h-[3px] rounded-full bg-[#222222] overflow-hidden">
+    <FadeUp delay={delay} className="bg-[#13131e] border border-white/[0.07] rounded-2xl p-5 space-y-3 hover:border-[#e8143c]/25 hover:bg-[#1a1a28] transition-all shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+      <p className="text-[10px] text-slate-600 uppercase tracking-[0.12em] font-semibold">{label}</p>
+      <p className="text-[40px] font-black text-white leading-none">{value ?? '?'}</p>
+      <div className="h-1.5 rounded-full bg-white/[0.04] overflow-hidden">
         <div
-          className="h-full rounded-full bg-[#CB3C33] transition-all"
+          className={`h-full rounded-full ${barColor} transition-all duration-700`}
           style={{ width: value !== null ? `${value}%` : '0%' }}
         />
       </div>
-      <p className="text-[12px] text-[#666666] leading-snug">{description}</p>
+      <p className="text-[11px] text-slate-600 leading-snug">{description}</p>
       {tier && (
-        <span className="text-[11px] font-semibold" style={{ color: tier.color }}>
+        <span className={`text-[10px] font-bold uppercase tracking-[0.12em] ${tier.colorCls}`}>
           {tier.label}
         </span>
       )}
@@ -180,29 +212,31 @@ function PathwayStageCard({
   status: StageStatus;
   delay: number;
 }) {
-  const borderColor =
-    status === 'current' ? '#CB3C33' : status === 'completed' ? '#22c55e' : '#222222';
+  const borderCls =
+    status === 'current'
+      ? 'border-[#e8143c]/40 bg-[#e8143c]/[0.04]'
+      : status === 'completed'
+        ? 'border-[#22c55e]/25 bg-[#22c55e]/[0.03]'
+        : 'border-white/[0.07]';
+
   const badge =
     status === 'current'
-      ? { label: 'CURRENT', color: '#CB3C33' }
+      ? { label: 'Current',   cls: 'text-[#e8143c] bg-[#e8143c]/10 border-[#e8143c]/25' }
       : status === 'completed'
-      ? { label: '✓ ACHIEVED', color: '#22c55e' }
-      : null;
+        ? { label: '✓ Done',  cls: 'text-[#22c55e] bg-[#22c55e]/10 border-[#22c55e]/20' }
+        : null;
 
   return (
-    <FadeUp delay={delay} className="flex-1 bg-[#111111] rounded-xl p-5 space-y-3" style={{ border: `1px solid ${borderColor}` }}>
+    <FadeUp delay={delay} className={`flex-1 bg-[#13131e] rounded-2xl p-5 space-y-3 border ${borderCls} transition-all`}>
       <div className="flex items-center justify-between gap-2">
         <p className="font-bold text-white text-sm">{title}</p>
         {badge && (
-          <span
-            className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border"
-            style={{ color: badge.color, borderColor: badge.color }}
-          >
+          <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border ${badge.cls}`}>
             {badge.label}
           </span>
         )}
       </div>
-      <p className="text-[#888888] text-sm leading-relaxed">{requirement}</p>
+      <p className="text-slate-500 text-sm leading-relaxed">{requirement}</p>
     </FadeUp>
   );
 }
@@ -221,14 +255,14 @@ function ActionCard({
   delay: number;
 }) {
   return (
-    <FadeUp delay={delay} className="flex-1 bg-[#111111] border border-[#222222] rounded-xl p-6 flex flex-col gap-4">
-      <div className="space-y-2 flex-1">
+    <FadeUp delay={delay} className="flex-1 bg-[#13131e] border border-white/[0.07] rounded-2xl p-6 flex flex-col gap-4 hover:border-[#e8143c]/25 hover:bg-[#1a1a28] transition-all duration-200 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+      <div className="space-y-1.5 flex-1">
         <p className="font-bold text-white text-sm">{title}</p>
-        <p className="text-[#888888] text-sm leading-relaxed">{description}</p>
+        <p className="text-slate-500 text-sm leading-relaxed">{description}</p>
       </div>
       <Link
         href={href}
-        className="inline-block text-center border border-[#CB3C33] text-[#CB3C33] text-sm font-medium px-4 py-2 rounded-lg transition-all duration-200 hover:bg-[#CB3C33] hover:text-white"
+        className="inline-flex items-center justify-center gap-1.5 border border-[#e8143c]/35 text-[#e8143c] text-[11px] font-bold uppercase tracking-[0.12em] px-4 py-2.5 rounded-xl transition-all duration-200 hover:bg-[#e8143c] hover:text-white hover:border-[#e8143c] hover:shadow-[0_0_16px_rgba(232,20,60,0.3)]"
       >
         {buttonLabel}
       </Link>
@@ -236,65 +270,65 @@ function ActionCard({
   );
 }
 
-// ─── Main client component ────────────────────────────────────────────────────
+// ─── Main ─────────────────────────────────────────────────────────────────────
 export default function GetStartedClient({ displayName, score, scoutingStatus }: Props) {
   const watchStatus = pathwayStageStatus('watchlist', scoutingStatus);
-  const poolStatus = pathwayStageStatus('talent_pool', scoutingStatus);
-  const qualStatus = pathwayStageStatus('qualifier_invited', scoutingStatus);
+  const poolStatus  = pathwayStageStatus('talent_pool', scoutingStatus);
+  const qualStatus  = pathwayStageStatus('qualifier_invited', scoutingStatus);
 
   return (
-    <div className="max-w-6xl space-y-10 px-4 py-6 lg:p-8">
+    <div className="max-w-6xl space-y-10 px-4 py-6 lg:px-8 lg:py-8">
 
-      {/* ── SECTION 1: Hero Banner ─────────────────────────────────────────── */}
+      {/* ── SECTION 1: Hero ────────────────────────────────────────────────── */}
       <FadeUp delay={0}>
-        <div
-          className="rounded-2xl overflow-hidden p-8 lg:p-10"
-          style={{
-            background: 'linear-gradient(135deg, #1a0a0a 0%, #0a0a0a 100%)',
-            border: '1px solid #1f1010',
-            boxShadow: 'inset -200px -100px 400px rgba(203,60,51,0.06), inset 200px 100px 400px transparent',
-          }}
-        >
-          <div
-            className="absolute top-0 right-0 w-96 h-96 pointer-events-none"
-            style={{
-              background: 'radial-gradient(circle at top right, rgba(203,60,51,0.18) 0%, transparent 65%)',
-            }}
-          />
-          <div className="relative flex flex-col lg:flex-row items-center lg:items-start justify-between gap-8">
+        <div className="relative rounded-2xl overflow-hidden border border-white/[0.07] bg-[#13131e] shadow-[0_8px_40px_rgba(0,0,0,0.6)]">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(232,20,60,0.10)_0%,transparent_60%)] pointer-events-none" />
+          <div className="absolute bottom-0 right-0 w-80 h-80 bg-[#e8143c]/[0.04] rounded-full blur-3xl pointer-events-none" />
+          {/* Top accent */}
+          <div className="h-px bg-gradient-to-r from-transparent via-[#e8143c]/50 to-transparent" />
+
+          <div className="relative flex flex-col lg:flex-row items-center lg:items-start justify-between gap-8 p-8 lg:p-10">
             {/* Left */}
-            <div className="space-y-3 max-w-xl">
-              <p
-                className="text-[11px] font-semibold uppercase"
-                style={{ color: '#CB3C33', letterSpacing: '0.15em' }}
-              >
-                Welcome to Kaimann Racing
-              </p>
-              <h1 className="text-[28px] font-extrabold text-white leading-tight">
+            <div className="space-y-4 max-w-xl">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#e8143c] animate-pulse shadow-[0_0_6px_rgba(232,20,60,0.7)]" />
+                <p className="text-[10px] font-bold text-[#e8143c] uppercase tracking-[0.15em]">
+                  Welcome to Kaimann Racing Analytics
+                </p>
+              </div>
+              <h1 className="text-[28px] lg:text-[32px] font-extrabold text-white leading-tight">
                 Your path to real-world racing<br className="hidden lg:block" /> starts here.
               </h1>
-              <p className="text-[14px] text-[#888888] leading-relaxed">
-                Kaimann Racing analyzes your iRacing performance across 5 dimensions and connects
+              <p className="text-[14px] text-slate-500 leading-relaxed max-w-md">
+                Kaimann Racing Analytics analyzes your iRacing performance across 5 dimensions and connects
                 top talents with real motorsport organizations.
               </p>
+              <div className="flex flex-wrap gap-2 pt-1">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-[11px] text-slate-400 font-medium">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e]" />
+                  Data-driven scouting
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-[11px] text-slate-400 font-medium">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#e8143c]" />
+                  Real motorsport opportunities
+                </span>
+              </div>
             </div>
-            {/* Right — Score circle */}
+            {/* Right */}
             <div className="shrink-0">
-              <ScoreCircle value={score?.score_total ?? null} />
+              <ScoreRing value={score?.score_total ?? null} />
             </div>
           </div>
         </div>
       </FadeUp>
 
       {/* ── SECTION 2: How it works ────────────────────────────────────────── */}
-      <section className="space-y-6">
-        <FadeUp delay={0}>
-          <div className="space-y-1">
-            <h2 className="text-lg font-bold text-white">How Kaimann Racing works</h2>
-            <p className="text-sm text-[#888888]">Three steps from the simulator to the real track.</p>
-          </div>
-        </FadeUp>
-
+      <section>
+        <SectionLabel
+          eyebrow="System Overview"
+          title="How Kaimann Racing Analytics works"
+          sub="Three steps from the simulator to the real track."
+        />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <StepCard
             number="01"
@@ -334,32 +368,28 @@ export default function GetStartedClient({ displayName, score, scoutingStatus }:
       </section>
 
       {/* ── SECTION 3: 5 Dimensions ────────────────────────────────────────── */}
-      <section className="space-y-6">
-        <FadeUp delay={0}>
-          <div className="space-y-1">
-            <h2 className="text-lg font-bold text-white">Your 5 Talent Dimensions</h2>
-            <p className="text-sm text-[#888888]">Every dimension tells a different part of your story.</p>
-          </div>
-        </FadeUp>
-
+      <section>
+        <SectionLabel
+          eyebrow="Performance Metrics"
+          title="Your 5 Talent Dimensions"
+          sub="Every dimension tells a different part of your story."
+        />
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
-          <DimensionCard label="Learning Rate" value={score?.score_learning_rate ?? null} description="How fast you improve over time" delay={0} />
-          <DimensionCard label="Consistency"   value={score?.score_consistency ?? null}   description="How reliable your race results are" delay={80} />
-          <DimensionCard label="Racecraft"     value={score?.score_racecraft ?? null}     description="How well you perform wheel-to-wheel" delay={160} />
-          <DimensionCard label="Versatility"   value={score?.score_versatility ?? null}   description="How you adapt to different tracks and cars" delay={240} />
-          <DimensionCard label="Activity"      value={score?.score_activity ?? null}      description="How seriously you train and compete" delay={320} />
+          <DimensionCard label="Learning Rate" value={score?.score_learning_rate ?? null} description="How fast you improve over time"        delay={0}   />
+          <DimensionCard label="Consistency"   value={score?.score_consistency ?? null}   description="How reliable your race results are"   delay={80}  />
+          <DimensionCard label="Racecraft"     value={score?.score_racecraft ?? null}     description="How well you perform wheel-to-wheel"  delay={160} />
+          <DimensionCard label="Versatility"   value={score?.score_versatility ?? null}   description="How you adapt to different tracks"    delay={240} />
+          <DimensionCard label="Activity"      value={score?.score_activity ?? null}      description="How seriously you train and compete"  delay={320} />
         </div>
       </section>
 
       {/* ── SECTION 4: Scouting Pathway ───────────────────────────────────── */}
-      <section className="space-y-6">
-        <FadeUp delay={0}>
-          <div className="space-y-1">
-            <h2 className="text-lg font-bold text-white">The Scouting Pathway</h2>
-            <p className="text-sm text-[#888888]">Every great driver starts somewhere.</p>
-          </div>
-        </FadeUp>
-
+      <section>
+        <SectionLabel
+          eyebrow="Pathway"
+          title="The Scouting Pathway"
+          sub="Every great driver starts somewhere."
+        />
         <div className="flex flex-col lg:flex-row items-stretch gap-3">
           <PathwayStageCard
             title="Watch List"
@@ -367,16 +397,16 @@ export default function GetStartedClient({ displayName, score, scoutingStatus }:
             status={watchStatus}
             delay={0}
           />
-          <div className="hidden lg:flex items-center text-[#CB3C33] text-xl font-bold shrink-0">→</div>
-          <div className="lg:hidden flex justify-center text-[#CB3C33] text-xl font-bold">↓</div>
+          <div className="hidden lg:flex items-center text-[#e8143c]/50 text-xl font-black shrink-0">→</div>
+          <div className="lg:hidden flex justify-center text-[#e8143c]/50 text-xl font-black">↓</div>
           <PathwayStageCard
             title="Talent Pool"
             requirement="Top 3% + Safety Rating ≥ 3.0 + 3 different tracks"
             status={poolStatus}
             delay={80}
           />
-          <div className="hidden lg:flex items-center text-[#CB3C33] text-xl font-bold shrink-0">→</div>
-          <div className="lg:hidden flex justify-center text-[#CB3C33] text-xl font-bold">↓</div>
+          <div className="hidden lg:flex items-center text-[#e8143c]/50 text-xl font-black shrink-0">→</div>
+          <div className="lg:hidden flex justify-center text-[#e8143c]/50 text-xl font-black">↓</div>
           <PathwayStageCard
             title="Qualifier Event"
             requirement="By invitation — top Talent Pool drivers only"
@@ -387,11 +417,11 @@ export default function GetStartedClient({ displayName, score, scoutingStatus }:
       </section>
 
       {/* ── SECTION 5: Quick Actions ───────────────────────────────────────── */}
-      <section className="space-y-6">
-        <FadeUp delay={0}>
-          <h2 className="text-lg font-bold text-white">What to do next</h2>
-        </FadeUp>
-
+      <section>
+        <SectionLabel
+          eyebrow="Quick Actions"
+          title="What to do next"
+        />
         <div className="flex flex-col lg:flex-row gap-4">
           <ActionCard
             title="View Your Score"

@@ -2,12 +2,13 @@
 
 import { useLayoutEffect, useRef, useState } from 'react';
 import {
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
+  ResponsiveContainer,
 } from 'recharts';
 
 type DataPoint = {
@@ -33,9 +34,9 @@ function CustomTooltip({
 }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-[#1a1a1a] border border-[#333333] rounded-lg px-3 py-2 text-sm shadow-xl">
-      <p className="text-[#888888]">{label}</p>
-      <p className="text-white font-semibold">{payload[0].value} iR</p>
+    <div className="bg-[#1a1a28] border border-white/[0.10] rounded-xl px-3.5 py-2.5 shadow-[0_8px_24px_rgba(0,0,0,0.6)]">
+      <p className="text-[10px] text-slate-500 uppercase tracking-widest mb-1">{label}</p>
+      <p className="text-slate-100 font-bold text-sm">{payload[0].value.toLocaleString()} <span className="text-slate-500 font-normal text-xs">iR</span></p>
     </div>
   );
 }
@@ -73,8 +74,12 @@ export default function IratingChart({ iRatingHistory }: { iRatingHistory: DataP
 
   if (data.length === 0) {
     return (
-      <div className="h-40 lg:h-[220px] flex items-center justify-center text-sm text-[#666666] px-4 text-center">
-        No iRating history in the last 90 days. Connect iRacing or sync data to see your trend here.
+      <div className="h-44 lg:h-[220px] flex flex-col items-center justify-center gap-2 text-center px-4">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#334155" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+        <p className="text-sm text-slate-600">No iRating history in the last 90 days.</p>
+        <p className="text-xs text-slate-700">Connect iRacing or sync data to see your trend here.</p>
       </div>
     );
   }
@@ -83,51 +88,67 @@ export default function IratingChart({ iRatingHistory }: { iRatingHistory: DataP
   const min = Math.min(...values);
   const max = Math.max(...values);
   const spread = max - min;
-  const padding = spread === 0 ? 80 : Math.max(50, Math.round(spread * 0.1));
+  const padding = spread === 0 ? 80 : Math.max(50, Math.round(spread * 0.12));
   const domain: [number, number] = [min - padding, max + padding];
-  const tickInterval = Math.max(1, Math.floor(data.length / 12));
+  const tickInterval = Math.max(1, Math.floor(data.length / 10));
 
   const ready = dims.width >= 2 && dims.height >= 2;
 
   return (
     <div
       ref={containerRef}
-      className="h-40 lg:h-[220px] w-full min-h-[160px] min-w-[0]"
+      className="h-44 lg:h-[220px] w-full min-h-[176px] min-w-[0]"
     >
       {!ready ? (
-        <div className="h-full w-full animate-pulse rounded bg-[#1a1a1a]/80" aria-hidden />
+        <div className="h-full w-full animate-pulse rounded-xl bg-white/[0.02]" aria-hidden />
       ) : (
-        <LineChart
+        <AreaChart
           width={dims.width}
           height={dims.height}
           data={data}
-          margin={{ top: 4, right: 8, left: -8, bottom: 0 }}
+          margin={{ top: 8, right: 8, left: -8, bottom: 0 }}
         >
-          <CartesianGrid stroke="#222222" strokeDasharray="3 3" vertical={false} />
+          <defs>
+            <linearGradient id="iratingGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#e8143c" stopOpacity={0.18} />
+              <stop offset="75%" stopColor="#e8143c" stopOpacity={0.03} />
+              <stop offset="100%" stopColor="#e8143c" stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <CartesianGrid
+            stroke="rgba(255,255,255,0.03)"
+            strokeDasharray="3 3"
+            vertical={false}
+          />
           <XAxis
             dataKey="date"
-            tick={{ fill: '#888888', fontSize: 11 }}
+            tick={{ fill: '#475569', fontSize: 10, fontFamily: 'inherit' }}
             axisLine={false}
             tickLine={false}
             interval={tickInterval}
           />
           <YAxis
             domain={domain}
-            tick={{ fill: '#888888', fontSize: 11 }}
+            tick={{ fill: '#475569', fontSize: 10, fontFamily: 'inherit' }}
             axisLine={false}
             tickLine={false}
-            width={50}
+            width={52}
+            tickFormatter={(v: number) => v.toLocaleString()}
           />
-          <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#333333' }} />
-          <Line
+          <Tooltip
+            content={<CustomTooltip />}
+            cursor={{ stroke: 'rgba(255,255,255,0.06)', strokeWidth: 1 }}
+          />
+          <Area
             type="monotone"
             dataKey="irating"
             stroke="#e8143c"
             strokeWidth={2}
+            fill="url(#iratingGradient)"
             dot={false}
-            activeDot={{ r: 4, fill: '#e8143c', strokeWidth: 0 }}
+            activeDot={{ r: 4, fill: '#e8143c', strokeWidth: 2, stroke: '#13131e' }}
           />
-        </LineChart>
+        </AreaChart>
       )}
     </div>
   );

@@ -8,6 +8,14 @@ import RecentRaces from '@/components/dashboard/RecentRaces';
 import InsightsBox from '@/components/dashboard/InsightsBox';
 import type { Profile, TalentScore, IracingHistory, RaceResult, ScoutingStatusRow } from '@/lib/database.types';
 
+function SectionLabel({ text }: { text: string }) {
+  return (
+    <div className="flex items-center gap-2 mb-4">
+      <h2 className="text-[11px] font-bold text-slate-500 uppercase tracking-[0.14em]">{text}</h2>
+    </div>
+  );
+}
+
 function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center h-96 gap-4">
@@ -29,7 +37,7 @@ function EmptyState() {
           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
         />
       </svg>
-      <p className="text-[#888888] text-sm">Your score is being calculated…</p>
+      <p className="text-slate-500 text-sm">Your score is being calculated…</p>
     </div>
   );
 }
@@ -94,7 +102,8 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className="px-4 py-6 lg:p-8 space-y-6 lg:space-y-8 max-w-6xl">
+    <div className="px-4 py-6 lg:px-8 lg:py-8 space-y-6 lg:space-y-7 max-w-6xl">
+
       {/* 1. Score header */}
       <ScoreHeader
         profile={profile}
@@ -104,35 +113,27 @@ export default async function DashboardPage() {
 
       {/* 2. iRating chart */}
       <section>
-        <h2 className="text-sm font-semibold text-[#888888] uppercase tracking-wide mb-3">
-          iRating Progress
-        </h2>
-        <div className="bg-[#111111] border border-[#222222] rounded-xl p-4">
+        <SectionLabel text="iRating Progress" />
+        <div className="bg-[#13131e] border border-white/[0.07] rounded-2xl px-5 pt-5 pb-4 shadow-[0_4px_24px_rgba(0,0,0,0.5)]">
           <IratingChart iRatingHistory={iRatingHistory} />
         </div>
       </section>
 
       {/* 3. Score dimensions */}
       <section>
-        <h2 className="text-sm font-semibold text-[#888888] uppercase tracking-wide mb-3">
-          Talent Score Breakdown
-        </h2>
+        <SectionLabel text="Talent Score Breakdown" />
         <ScoreDimensions latestScore={latestScore} previousScore={previousScore} />
       </section>
 
       {/* 4. Recent races + insights */}
       <section>
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
           <div className="lg:col-span-3">
-            <h2 className="text-sm font-semibold text-[#888888] uppercase tracking-wide mb-3">
-              Recent Races
-            </h2>
+            <SectionLabel text="Recent Races" />
             <RecentRaces raceResults={raceResults} />
           </div>
           <div className="lg:col-span-2">
-            <h2 className="text-sm font-semibold text-[#888888] uppercase tracking-wide mb-3">
-              Insights
-            </h2>
+            <SectionLabel icon="✦" text="Insights" />
             <InsightsBox insightsText={latestScore.insights_text} />
           </div>
         </div>
